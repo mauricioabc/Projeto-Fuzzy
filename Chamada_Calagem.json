@@ -1,10 +1,12 @@
 {
 	"Especie": "Forrageira",
 	"Cultura": "Campo natural",
+	"TipoPlantio": "Convencional",
     "phSolo": "8",
 	"IndiceSMP": "5.19",
 	"Bases": "23.85",
     "Ca": "2.07",
     "Mg": "1.17",
+	"AlSat": "38.87",
 	"CTC": "14.51"
 }
