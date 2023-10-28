@@ -3,17 +3,27 @@ from typing import Any
 
 class InitialInformation:
 
-    def __init__(self,Especie, Cultura, TipoPlantio, phSolo, IndiceSMP, Bases, Ca, Mg, AlSat, CTC):
+    def __init__(self, Especie, Cultura, TipoPlantio, phSolo=None, IndiceSMP=None, Bases=None, Ca=None, Mg=None, AlSat=None, CTC=None, p=None, k=None, inoculacao=None):
         self.Especie = Especie
         self.Cultura = Cultura
         self.TipoPlantio = TipoPlantio
-        self.phSolo = phSolo
-        self.IndiceSMP = IndiceSMP
-        self.Bases = Bases
-        self.AlSat = AlSat
-        self.Ca = Ca
-        self.Mg = Mg
-        self.CTC = CTC
+
+        if phSolo is not None:
+            # Se os parâmetros relacionados ao solo forem fornecidos
+            self.phSolo = phSolo
+            self.IndiceSMP = IndiceSMP
+            self.Bases = Bases
+            self.Ca = Ca
+            self.Mg = Mg
+            self.AlSat = AlSat
+            self.CTC = CTC
+        elif p is not None:
+            # Se os parâmetros relacionados aos nutrientes forem fornecidos
+            self.p = p
+            self.k = k
+            self.inoculacao = inoculacao
+        else:
+            raise ValueError("Você deve fornecer parâmetros relacionados ao solo ou aos nutrientes.")
 
     def __setattr__(self, name: str, value: Any) -> None:
         super().__setattr__(name, value)

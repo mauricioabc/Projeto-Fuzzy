@@ -32,6 +32,28 @@ def processa_calagem():
         traceback.print_exc()
         return jsonify({'status': 'error', 'message': str(e)}), 400
 
+@app.route('/ProcessaAdubacao', methods=['POST'])
+def processa_adubacao():
+    try:
+        data = request.get_json()
+        validador = APIValidator()
+        entrada, mensagem = validador.valida_chamada_adubacao(data)
+
+        if mensagem == 'OK':
+            manager = APIManager()
+            message, message2 = manager.processa_adubacao(entrada)
+
+            return jsonify({'status': 'success', 'message': message, 'message2': message2
+                            })
+        else:
+            return jsonify({'status': 'error', 'message': entrada})
+
+    except Exception as e:
+        print(f'Erro: {str(e)}')
+        print('Traceback:')
+        import traceback
+        traceback.print_exc()
+        return jsonify({'status': 'error', 'message': str(e)}), 400
 
 @app.route('/', methods=['GET'])
 def process_server_default_message():
