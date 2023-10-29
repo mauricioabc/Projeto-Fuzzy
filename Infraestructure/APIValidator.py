@@ -4,9 +4,12 @@ from Entities.InitialInformation import InitialInformation
 class APIValidator:
 
     def __init__(self):
-        self.culturaAtendidas = ['Alfafa', 'Espécies perenes',
+        self.culturaAtendidasAducacao = ['Alfafa', 'Espécies perenes',
                                  'Gramíneas', 'Leguminosas',
-                                 'Consórcios', 'Campo natural']
+                                 'Consórcios', 'Campo natural', 'Milho', 'Campo natural misturado']
+        self.culturaAtendidasCalagem = ['Alfafa', 'Espécies perenes',
+                                         'Gramíneas', 'Leguminosas',
+                                         'Consórcios', 'Campo natural']
 
     def valida_chamada_calagem(self, chamada):
         try:
@@ -31,7 +34,7 @@ class APIValidator:
             # Verifica a cultura
             elif cultura is None:
                 return 'O JSON deve conter a chave "Cultura".', 'ERRO'
-            elif cultura not in self.culturaAtendidas:
+            elif cultura not in self.culturaAtendidasCalagem:
                 return ('A API atende apenas aos tipos de cultura: Alfafa, '
                         'Espécies perenes, Gramíneas, Leguminosas, '
                         'Consórcios e Campo natural; '
@@ -88,10 +91,10 @@ class APIValidator:
             # Verifica a cultura
             elif cultura is None:
                 return 'O JSON deve conter a chave "Cultura".', 'ERRO'
-            elif cultura not in self.culturaAtendidas:
+            elif cultura not in self.culturaAtendidasAducacao:
                 return ('A API atende apenas aos tipos de cultura: Alfafa, '
                         'Espécies perenes, Gramíneas, Leguminosas, '
-                        'Consórcios e Campo natural; '
+                        'Consórcios, Campo natural e Milho; '
                         'para mais informações contate o nosso suporte.', 'ERRO')
             elif cultura == 'Gramíneas' or cultura == 'Leguminosas' or cultura == 'Consórcios':
                 if tipoPlantio is None:
