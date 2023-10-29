@@ -1,0 +1,11 @@
+{
+	"Especie": "Forrageira",
+	"Cultura": "Gramíneas",
+	"Estacao": "Fria",
+	"TipoPlantio": "Convencional",
+	"NivelNitrogenio": "120",
+	"EficienciaInoculacao": "true",
+	"NivelFosforo": "120",
+	"NivelPotassio": "120",
+	"MateriaOrganica": "5.1"
+}

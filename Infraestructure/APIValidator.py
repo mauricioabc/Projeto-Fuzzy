@@ -71,9 +71,12 @@ class APIValidator:
             especie = chamada.get('Especie')
             cultura = chamada.get('Cultura')
             tipoPlantio = chamada.get('TipoPlantio')
-            p = chamada.get('Nível de Fósforo (P)')
-            k = chamada.get('Nível de Potássio (K)')
-            inoculacao = chamada.get('Eficiência de Inoculação')
+            n = chamada.get('NivelNitrogenio')
+            p = chamada.get('NivelFosforo')
+            k = chamada.get('NivelPotassio')
+            inoculacao = chamada.get('EficienciaInoculacao')
+            estacao = chamada.get('Estacao')
+            materiaOrganica = chamada.get('MateriaOrganica')
 
             # Verifica a espécie
             if especie is None:
@@ -93,6 +96,16 @@ class APIValidator:
             elif cultura == 'Gramíneas' or cultura == 'Leguminosas' or cultura == 'Consórcios':
                 if tipoPlantio is None:
                     return 'O JSON deve conter a chave "Bases".', 'ERRO'
+
+            # Verifica parâmetros das culturas
+            elif cultura =='Alfafa':
+                if inoculacao is None:
+                    return 'O JSON deve conter a chave "EficienciaInoculacao".', 'ERRO'
+            elif cultura =='Gramíneas':
+                if estacao is None:
+                    return 'O JSON deve conter a chave "Estacao".', 'ERRO'
+                if materiaOrganica is None:
+                    return 'O JSON deve conter a chave "MateriaOrganica".', 'ERRO'
             
 
             # Verifica demais tags
@@ -103,7 +116,8 @@ class APIValidator:
             elif inoculacao is None:
                 return 'O JSON deve conter a chave "Eficiência de Inoculação".', 'ERRO'
 
-            entrada = InitialInformation(especie, cultura, tipoPlantio, p=p, k=k, inoculacao=inoculacao)
+            entrada = InitialInformation(especie, cultura, tipoPlantio, n=n, p=p, k=k, Inoculacao=inoculacao,
+                                         Estacao=estacao, MateriaOrganica=materiaOrganica)
 
             return entrada, 'OK'
         except Exception as e:

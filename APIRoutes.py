@@ -41,10 +41,10 @@ def processa_adubacao():
 
         if mensagem == 'OK':
             manager = APIManager()
-            message, message2 = manager.processa_adubacao(entrada)
+            message_N, message_P, message_K = manager.processa_adubacao(entrada)
 
-            return jsonify({'status': 'success', 'message': message, 'message2': message2
-                            })
+            return jsonify({'status': 'success', 'message': {'N': message_N, 'P': message_P, 'K': message_K}})
+
         else:
             return jsonify({'status': 'error', 'message': entrada})
 

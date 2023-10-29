@@ -3,7 +3,7 @@ from typing import Any
 
 class InitialInformation:
 
-    def __init__(self, Especie, Cultura, TipoPlantio, phSolo=None, IndiceSMP=None, Bases=None, Ca=None, Mg=None, AlSat=None, CTC=None, p=None, k=None, inoculacao=None):
+    def __init__(self, Especie, Cultura, TipoPlantio, phSolo=None, IndiceSMP=None, Bases=None, Ca=None, Mg=None, AlSat=None, CTC=None, n=None, p=None, k=None, Inoculacao=None, Estacao=None, MateriaOrganica=None):
         self.Especie = Especie
         self.Cultura = Cultura
         self.TipoPlantio = TipoPlantio
@@ -19,9 +19,12 @@ class InitialInformation:
             self.CTC = CTC
         elif p is not None:
             # Se os parâmetros relacionados aos nutrientes forem fornecidos
+            self.n = n
             self.p = p
             self.k = k
-            self.inoculacao = inoculacao
+            self.Inoculacao = Inoculacao
+            self.Estacao = Estacao
+            self.MateriaOrganica = MateriaOrganica
         else:
             raise ValueError("Você deve fornecer parâmetros relacionados ao solo ou aos nutrientes.")
 
