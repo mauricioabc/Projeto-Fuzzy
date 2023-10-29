@@ -80,6 +80,7 @@ class APIValidator:
             inoculacao = chamada.get('EficienciaInoculacao')
             estacao = chamada.get('Estacao')
             materiaOrganica = chamada.get('MateriaOrganica')
+            teorArgila = chamada.get('TeorArgila')
 
             # Verifica a espécie
             if especie is None:
@@ -120,7 +121,7 @@ class APIValidator:
                 return 'O JSON deve conter a chave "Eficiência de Inoculação".', 'ERRO'
 
             entrada = InitialInformation(especie, cultura, tipoPlantio, n=n, p=p, k=k, Inoculacao=inoculacao,
-                                         Estacao=estacao, MateriaOrganica=materiaOrganica)
+                                         Estacao=estacao, MateriaOrganica=materiaOrganica, TeorArgila=teorArgila)
 
             return entrada, 'OK'
         except Exception as e:

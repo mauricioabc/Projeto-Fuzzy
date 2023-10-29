@@ -42,6 +42,38 @@ class APIManager:
         sistema_nitrogenio.compute()
         return round(float(sistema_nitrogenio.output['Quantidade de Nitrogênio']), 2)
 
+    def processa_fosforo(self):
+        # Crie os objetos 'teor_materia_organica' e 'quantidade_nitrogenio' como variáveis Antecedent e Consequent
+        teor_fosforo = ctrl.Antecedent(np.arange(self.InformationDicts.FosforoDict['muito_baixo']['faixa'][0], self.InformationDicts.FosforoDict['muito_alto']['faixa'][1], 0.1), 'Teor de Fosfóro')
+        quantidade_fosforo = ctrl.Consequent(np.arange(self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][1], 1), 'Quantidade de Fosfóro')
+
+        # Crie os conjuntos de pertinência para o Teor de Matéria Orgânica no Solo
+        teor_fosforo['muito_baixo'] = fuzz.trimf(teor_fosforo.universe,[0,self.InformationDicts.FosforoDict['muito_baixo']['faixa'][0], self.InformationDicts.FosforoDict['muito_baixo']['faixa'][1]])
+        teor_fosforo['baixo'] = fuzz.trimf(teor_fosforo.universe, [self.InformationDicts.FosforoDict['baixo']['faixa'][0], int(np.mean([self.InformationDicts.FosforoDict['baixo']['faixa'][0], self.InformationDicts.FosforoDict['baixo']['faixa'][1]])),self.InformationDicts.FosforoDict['baixo']['faixa'][1]])
+        teor_fosforo['medio'] = fuzz.trimf(teor_fosforo.universe, [self.InformationDicts.FosforoDict['medio']['faixa'][0], int(np.mean([self.InformationDicts.FosforoDict['medio']['faixa'][0], self.InformationDicts.FosforoDict['medio']['faixa'][1]])),self.InformationDicts.FosforoDict['medio']['faixa'][1]])
+        teor_fosforo['alto'] = fuzz.trimf(teor_fosforo.universe, [self.InformationDicts.FosforoDict['alto']['faixa'][0], int(np.mean([self.InformationDicts.FosforoDict['alto']['faixa'][0], self.InformationDicts.FosforoDict['alto']['faixa'][1]])),self.InformationDicts.FosforoDict['alto']['faixa'][1]])
+        teor_fosforo['muito_alto'] = fuzz.smf(teor_fosforo.universe, self.InformationDicts.FosforoDict['muito_alto']['faixa'][0], self.InformationDicts.FosforoDict['muito_alto']['faixa'][1])
+
+        # Crie os conjuntos de pertinência para a Quantidade de Nitrogênio
+        quantidade_fosforo['muito_baixo'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][0], self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][1]])
+        quantidade_fosforo['baixo'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['baixo']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['baixo']['kg_p_ha'][0], self.InformationDicts.FosforoDict['baixo']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['baixo']['kg_p_ha'][1]])
+        quantidade_fosforo['medio'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['medio']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['medio']['kg_p_ha'][0], self.InformationDicts.FosforoDict['medio']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['medio']['kg_p_ha'][1]])
+        quantidade_fosforo['alto'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['alto']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['alto']['kg_p_ha'][0], self.InformationDicts.FosforoDict['alto']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['alto']['kg_p_ha'][1]])
+        quantidade_fosforo['muito_alto'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][1]])
+
+        # Crie regras Fuzzy para o Nitrogênio
+        regra1_fosforo = ctrl.Rule(teor_fosforo['muito_baixo'], quantidade_fosforo['muito_baixo'])
+        regra2_fosforo = ctrl.Rule(teor_fosforo['baixo'], quantidade_fosforo['baixo'])
+        regra3_fosforo = ctrl.Rule(teor_fosforo['medio'], quantidade_fosforo['medio'])
+        regra4_fosforo = ctrl.Rule(teor_fosforo['alto'], quantidade_fosforo['alto'])
+        regra5_fosforo = ctrl.Rule(teor_fosforo['muito_alto'], quantidade_fosforo['muito_alto'])
+
+        sistema_controle_fosforo = ctrl.ControlSystem([regra1_fosforo, regra2_fosforo, regra3_fosforo, regra4_fosforo, regra5_fosforo])
+        sistema_fosforo = ctrl.ControlSystemSimulation(sistema_controle_fosforo)
+        sistema_fosforo.input['Teor de Fosfóro'] = float(self.entrada.p)
+        sistema_fosforo.compute()
+        return round(float(sistema_fosforo.output['Quantidade de Fosfóro']), 2)
+
     def processa_adubacao(self, entrada):
         # Cria dados que serão utilizados nos cálculos e retornos
         self.entrada = entrada
@@ -57,10 +89,13 @@ class APIManager:
                 mensagem_N = 'A adubação nitrogenada não é necessária.'
             else :
                 mensagem_N = 'Aplicar de 20 a 40 kg de N/ha após cada corte, dependendo do desenvolvimento da cultura.'
+            # Processa o P
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
 
         # Processa Gramíneas
         if entrada.Cultura == 'Gramíneas':
             mensagem_N = f"É preciso aplicar {self.processa_nitrogenio()}kg/ha."
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
 
         # Processa Leguminosas
         if entrada.Cultura == 'Leguminosas':
@@ -69,6 +104,7 @@ class APIManager:
                 mensagem_N = 'A adubação nitrogenada não é necessária.'
             else :
                 mensagem_N = 'Aplicar nitrogênio na dose de 20 kg de N/ha, após cada duas utilizações da pastagem.'
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
 
         # Processa Consórcios
         if entrada.Cultura == 'Consórcios':
@@ -77,17 +113,21 @@ class APIManager:
                 mensagem_N = 'A adubação nitrogenada não é necessária.'
             else:
                 mensagem_N = 'Aaplicar 20 kg de N/ha por ocasião do perfilhamento da gramínea e 20 kg de N/ha após cada duas utilizações da pastagem'
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
 
         # Processa Milho e Sorgo
         if entrada.Cultura == 'Milho':
             mensagem_N = f"É preciso aplicar {self.processa_nitrogenio()}kg/ha."
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
 
         # Processa Pastagens Naturais
         if entrada.Cultura == 'Campo natural':
             mensagem_N = f"É preciso aplicar {self.processa_nitrogenio()}kg/ha."
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
 
         if entrada.Cultura == 'Campo natural misturado':
             mensagem_N = f"É preciso aplicar {self.processa_nitrogenio()}kg/ha."
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
 
         return mensagem_N, mensagem_P, mensagem_K
 
