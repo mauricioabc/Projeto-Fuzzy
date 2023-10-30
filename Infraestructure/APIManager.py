@@ -4,6 +4,7 @@ import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
+
 class APIManager:
     def __init__(self):
         self.entrada = None
@@ -47,27 +48,28 @@ class APIManager:
         teor_fosforo = ctrl.Antecedent(np.arange(self.InformationDicts.FosforoDict['muito_baixo']['faixa'][0], self.InformationDicts.FosforoDict['muito_alto']['faixa'][1], 0.1), 'Teor de Fosfóro')
         quantidade_fosforo = ctrl.Consequent(np.arange(self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][1], 1), 'Quantidade de Fosfóro')
 
-        # Crie os conjuntos de pertinência para o Teor de Matéria Orgânica no Solo
+        # Crie os conjuntos de pertinência para o Teor de Fosfóro no Solo
         teor_fosforo['muito_baixo'] = fuzz.trimf(teor_fosforo.universe,[0,self.InformationDicts.FosforoDict['muito_baixo']['faixa'][0], self.InformationDicts.FosforoDict['muito_baixo']['faixa'][1]])
         teor_fosforo['baixo'] = fuzz.trimf(teor_fosforo.universe, [self.InformationDicts.FosforoDict['baixo']['faixa'][0], int(np.mean([self.InformationDicts.FosforoDict['baixo']['faixa'][0], self.InformationDicts.FosforoDict['baixo']['faixa'][1]])),self.InformationDicts.FosforoDict['baixo']['faixa'][1]])
         teor_fosforo['medio'] = fuzz.trimf(teor_fosforo.universe, [self.InformationDicts.FosforoDict['medio']['faixa'][0], int(np.mean([self.InformationDicts.FosforoDict['medio']['faixa'][0], self.InformationDicts.FosforoDict['medio']['faixa'][1]])),self.InformationDicts.FosforoDict['medio']['faixa'][1]])
         teor_fosforo['alto'] = fuzz.trimf(teor_fosforo.universe, [self.InformationDicts.FosforoDict['alto']['faixa'][0], int(np.mean([self.InformationDicts.FosforoDict['alto']['faixa'][0], self.InformationDicts.FosforoDict['alto']['faixa'][1]])),self.InformationDicts.FosforoDict['alto']['faixa'][1]])
         teor_fosforo['muito_alto'] = fuzz.smf(teor_fosforo.universe, self.InformationDicts.FosforoDict['muito_alto']['faixa'][0], self.InformationDicts.FosforoDict['muito_alto']['faixa'][1])
 
-        # Crie os conjuntos de pertinência para a Quantidade de Nitrogênio
+        # Crie os conjuntos de pertinência para a Quantidade de Fosfóro
         quantidade_fosforo['muito_baixo'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][0], self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][1]])
         quantidade_fosforo['baixo'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['baixo']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['baixo']['kg_p_ha'][0], self.InformationDicts.FosforoDict['baixo']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['baixo']['kg_p_ha'][1]])
         quantidade_fosforo['medio'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['medio']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['medio']['kg_p_ha'][0], self.InformationDicts.FosforoDict['medio']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['medio']['kg_p_ha'][1]])
         quantidade_fosforo['alto'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['alto']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['alto']['kg_p_ha'][0], self.InformationDicts.FosforoDict['alto']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['alto']['kg_p_ha'][1]])
         quantidade_fosforo['muito_alto'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][1]])
 
-        # Crie regras Fuzzy para o Nitrogênio
+        # Crie regras Fuzzy para o Fosfóro
         regra1_fosforo = ctrl.Rule(teor_fosforo['muito_baixo'], quantidade_fosforo['muito_baixo'])
         regra2_fosforo = ctrl.Rule(teor_fosforo['baixo'], quantidade_fosforo['baixo'])
         regra3_fosforo = ctrl.Rule(teor_fosforo['medio'], quantidade_fosforo['medio'])
         regra4_fosforo = ctrl.Rule(teor_fosforo['alto'], quantidade_fosforo['alto'])
         regra5_fosforo = ctrl.Rule(teor_fosforo['muito_alto'], quantidade_fosforo['muito_alto'])
 
+        # Executa Cálculo
         sistema_controle_fosforo = ctrl.ControlSystem([regra1_fosforo, regra2_fosforo, regra3_fosforo, regra4_fosforo, regra5_fosforo])
         sistema_fosforo = ctrl.ControlSystemSimulation(sistema_controle_fosforo)
         sistema_fosforo.input['Teor de Fosfóro'] = float(self.entrada.p)
@@ -79,27 +81,28 @@ class APIManager:
         teor_potassio = ctrl.Antecedent(np.arange(self.InformationDicts.PotassioDict['muito_baixo']['faixa'][0], self.InformationDicts.PotassioDict['muito_alto']['faixa'][1], 0.1), 'Teor de Potássio')
         quantidade_potassio = ctrl.Consequent(np.arange(self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][1], 1), 'Quantidade de Potássio')
 
-        # Crie os conjuntos de pertinência para o Teor de Matéria Orgânica no Solo
+        # Crie os conjuntos de pertinência para o Teor de Potássio no Solo
         teor_potassio['muito_baixo'] = fuzz.trimf(teor_potassio.universe,[0,self.InformationDicts.PotassioDict['muito_baixo']['faixa'][0], self.InformationDicts.PotassioDict['muito_baixo']['faixa'][1]])
         teor_potassio['baixo'] = fuzz.trimf(teor_potassio.universe, [self.InformationDicts.PotassioDict['baixo']['faixa'][0], int(np.mean([self.InformationDicts.PotassioDict['baixo']['faixa'][0], self.InformationDicts.PotassioDict['baixo']['faixa'][1]])),self.InformationDicts.PotassioDict['baixo']['faixa'][1]])
         teor_potassio['medio'] = fuzz.trimf(teor_potassio.universe, [self.InformationDicts.PotassioDict['medio']['faixa'][0], int(np.mean([self.InformationDicts.PotassioDict['medio']['faixa'][0], self.InformationDicts.PotassioDict['medio']['faixa'][1]])),self.InformationDicts.PotassioDict['medio']['faixa'][1]])
         teor_potassio['alto'] = fuzz.trimf(teor_potassio.universe, [self.InformationDicts.PotassioDict['alto']['faixa'][0], int(np.mean([self.InformationDicts.PotassioDict['alto']['faixa'][0], self.InformationDicts.PotassioDict['alto']['faixa'][1]])),self.InformationDicts.PotassioDict['alto']['faixa'][1]])
         teor_potassio['muito_alto'] = fuzz.smf(teor_potassio.universe, self.InformationDicts.PotassioDict['muito_alto']['faixa'][0], self.InformationDicts.PotassioDict['muito_alto']['faixa'][1])
 
-        # Crie os conjuntos de pertinência para a Quantidade de Nitrogênio
+        # Crie os conjuntos de pertinência para a Quantidade de Potássio
         quantidade_potassio['muito_baixo'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][0], self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][1]])
         quantidade_potassio['baixo'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['baixo']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['baixo']['kg_p_ha'][0], self.InformationDicts.PotassioDict['baixo']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['baixo']['kg_p_ha'][1]])
         quantidade_potassio['medio'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['medio']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['medio']['kg_p_ha'][0], self.InformationDicts.PotassioDict['medio']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['medio']['kg_p_ha'][1]])
         quantidade_potassio['alto'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['alto']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['alto']['kg_p_ha'][0], self.InformationDicts.PotassioDict['alto']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['alto']['kg_p_ha'][1]])
         quantidade_potassio['muito_alto'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][1]])
 
-        # Crie regras Fuzzy para o Nitrogênio
+        # Crie regras Fuzzy para o Potássio
         regra1_potassio = ctrl.Rule(teor_potassio['muito_baixo'], quantidade_potassio['muito_baixo'])
         regra2_potassio = ctrl.Rule(teor_potassio['baixo'], quantidade_potassio['baixo'])
         regra3_potassio = ctrl.Rule(teor_potassio['medio'], quantidade_potassio['medio'])
         regra4_potassio = ctrl.Rule(teor_potassio['alto'], quantidade_potassio['alto'])
         regra5_potassio = ctrl.Rule(teor_potassio['muito_alto'], quantidade_potassio['muito_alto'])
 
+        # Executa Cálculo
         sistema_controle_potassio = ctrl.ControlSystem([regra1_potassio, regra2_potassio, regra3_potassio, regra4_potassio, regra5_potassio])
         sistema_potassio = ctrl.ControlSystemSimulation(sistema_controle_potassio)
         sistema_potassio.input['Teor de Potássio'] = float(self.entrada.CTC)
@@ -116,12 +119,10 @@ class APIManager:
 
         # Processa Alfafa
         if entrada.Cultura == 'Alfafa':
-            # Processa o N
             if entrada.Inoculacao == 'true':
                 mensagem_N = 'A adubação nitrogenada não é necessária.'
             else :
                 mensagem_N = 'Aplicar de 20 a 40 kg de N/ha após cada corte, dependendo do desenvolvimento da cultura.'
-            # Processa o P
             mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
             mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
@@ -133,7 +134,6 @@ class APIManager:
 
         # Processa Leguminosas
         if entrada.Cultura == 'Leguminosas':
-            # Processa o N
             if entrada.Inoculacao == 'true':
                 mensagem_N = 'A adubação nitrogenada não é necessária.'
             else :
@@ -143,7 +143,6 @@ class APIManager:
 
         # Processa Consórcios
         if entrada.Cultura == 'Consórcios':
-            # Processa o N
             if entrada.Inoculacao == 'true':
                 mensagem_N = 'A adubação nitrogenada não é necessária.'
             else:
@@ -170,8 +169,6 @@ class APIManager:
             mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
         return mensagem_N, mensagem_P, mensagem_K
-
-
 
     def processa_calagem(self, entrada):
         phSolo = float(entrada.phSolo)
