@@ -22,6 +22,7 @@ class InitialInformation:
             self.n = n
             self.p = p
             self.k = k
+            self.CTC = CTC
             self.Inoculacao = Inoculacao
             self.Estacao = Estacao
             self.MateriaOrganica = MateriaOrganica

@@ -43,7 +43,7 @@ class APIManager:
         return round(float(sistema_nitrogenio.output['Quantidade de Nitrogênio']), 2)
 
     def processa_fosforo(self):
-        # Crie os objetos 'teor_materia_organica' e 'quantidade_nitrogenio' como variáveis Antecedent e Consequent
+        # Crie os objetos 'teor_fosforo' e 'quantidade_fosforo' como variáveis Antecedent e Consequente
         teor_fosforo = ctrl.Antecedent(np.arange(self.InformationDicts.FosforoDict['muito_baixo']['faixa'][0], self.InformationDicts.FosforoDict['muito_alto']['faixa'][1], 0.1), 'Teor de Fosfóro')
         quantidade_fosforo = ctrl.Consequent(np.arange(self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][1], 1), 'Quantidade de Fosfóro')
 
@@ -74,6 +74,38 @@ class APIManager:
         sistema_fosforo.compute()
         return round(float(sistema_fosforo.output['Quantidade de Fosfóro']), 2)
 
+    def processa_potassio(self):
+        # Crie os objetos 'teor_potassio' e 'quantidade_potassio' como variáveis Antecedent e Consequente
+        teor_potassio = ctrl.Antecedent(np.arange(self.InformationDicts.PotassioDict['muito_baixo']['faixa'][0], self.InformationDicts.PotassioDict['muito_alto']['faixa'][1], 0.1), 'Teor de Potássio')
+        quantidade_potassio = ctrl.Consequent(np.arange(self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][1], 1), 'Quantidade de Potássio')
+
+        # Crie os conjuntos de pertinência para o Teor de Matéria Orgânica no Solo
+        teor_potassio['muito_baixo'] = fuzz.trimf(teor_potassio.universe,[0,self.InformationDicts.PotassioDict['muito_baixo']['faixa'][0], self.InformationDicts.PotassioDict['muito_baixo']['faixa'][1]])
+        teor_potassio['baixo'] = fuzz.trimf(teor_potassio.universe, [self.InformationDicts.PotassioDict['baixo']['faixa'][0], int(np.mean([self.InformationDicts.PotassioDict['baixo']['faixa'][0], self.InformationDicts.PotassioDict['baixo']['faixa'][1]])),self.InformationDicts.PotassioDict['baixo']['faixa'][1]])
+        teor_potassio['medio'] = fuzz.trimf(teor_potassio.universe, [self.InformationDicts.PotassioDict['medio']['faixa'][0], int(np.mean([self.InformationDicts.PotassioDict['medio']['faixa'][0], self.InformationDicts.PotassioDict['medio']['faixa'][1]])),self.InformationDicts.PotassioDict['medio']['faixa'][1]])
+        teor_potassio['alto'] = fuzz.trimf(teor_potassio.universe, [self.InformationDicts.PotassioDict['alto']['faixa'][0], int(np.mean([self.InformationDicts.PotassioDict['alto']['faixa'][0], self.InformationDicts.PotassioDict['alto']['faixa'][1]])),self.InformationDicts.PotassioDict['alto']['faixa'][1]])
+        teor_potassio['muito_alto'] = fuzz.smf(teor_potassio.universe, self.InformationDicts.PotassioDict['muito_alto']['faixa'][0], self.InformationDicts.PotassioDict['muito_alto']['faixa'][1])
+
+        # Crie os conjuntos de pertinência para a Quantidade de Nitrogênio
+        quantidade_potassio['muito_baixo'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][0], self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][1]])
+        quantidade_potassio['baixo'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['baixo']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['baixo']['kg_p_ha'][0], self.InformationDicts.PotassioDict['baixo']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['baixo']['kg_p_ha'][1]])
+        quantidade_potassio['medio'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['medio']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['medio']['kg_p_ha'][0], self.InformationDicts.PotassioDict['medio']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['medio']['kg_p_ha'][1]])
+        quantidade_potassio['alto'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['alto']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['alto']['kg_p_ha'][0], self.InformationDicts.PotassioDict['alto']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['alto']['kg_p_ha'][1]])
+        quantidade_potassio['muito_alto'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][1]])
+
+        # Crie regras Fuzzy para o Nitrogênio
+        regra1_potassio = ctrl.Rule(teor_potassio['muito_baixo'], quantidade_potassio['muito_baixo'])
+        regra2_potassio = ctrl.Rule(teor_potassio['baixo'], quantidade_potassio['baixo'])
+        regra3_potassio = ctrl.Rule(teor_potassio['medio'], quantidade_potassio['medio'])
+        regra4_potassio = ctrl.Rule(teor_potassio['alto'], quantidade_potassio['alto'])
+        regra5_potassio = ctrl.Rule(teor_potassio['muito_alto'], quantidade_potassio['muito_alto'])
+
+        sistema_controle_potassio = ctrl.ControlSystem([regra1_potassio, regra2_potassio, regra3_potassio, regra4_potassio, regra5_potassio])
+        sistema_potassio = ctrl.ControlSystemSimulation(sistema_controle_potassio)
+        sistema_potassio.input['Teor de Potássio'] = float(self.entrada.CTC)
+        sistema_potassio.compute()
+        return round(float(sistema_potassio.output['Quantidade de Potássio']), 2)
+
     def processa_adubacao(self, entrada):
         # Cria dados que serão utilizados nos cálculos e retornos
         self.entrada = entrada
@@ -91,11 +123,13 @@ class APIManager:
                 mensagem_N = 'Aplicar de 20 a 40 kg de N/ha após cada corte, dependendo do desenvolvimento da cultura.'
             # Processa o P
             mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
         # Processa Gramíneas
         if entrada.Cultura == 'Gramíneas':
             mensagem_N = f"É preciso aplicar {self.processa_nitrogenio()}kg/ha."
             mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
         # Processa Leguminosas
         if entrada.Cultura == 'Leguminosas':
@@ -105,6 +139,7 @@ class APIManager:
             else :
                 mensagem_N = 'Aplicar nitrogênio na dose de 20 kg de N/ha, após cada duas utilizações da pastagem.'
             mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
         # Processa Consórcios
         if entrada.Cultura == 'Consórcios':
@@ -114,20 +149,25 @@ class APIManager:
             else:
                 mensagem_N = 'Aaplicar 20 kg de N/ha por ocasião do perfilhamento da gramínea e 20 kg de N/ha após cada duas utilizações da pastagem'
             mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
         # Processa Milho e Sorgo
         if entrada.Cultura == 'Milho':
             mensagem_N = f"É preciso aplicar {self.processa_nitrogenio()}kg/ha."
             mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
         # Processa Pastagens Naturais
         if entrada.Cultura == 'Campo natural':
             mensagem_N = f"É preciso aplicar {self.processa_nitrogenio()}kg/ha."
             mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
+        # Processa Pastagens Misturadas
         if entrada.Cultura == 'Campo natural misturado':
             mensagem_N = f"É preciso aplicar {self.processa_nitrogenio()}kg/ha."
             mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
         return mensagem_N, mensagem_P, mensagem_K
 
