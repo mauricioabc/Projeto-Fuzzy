@@ -1,10 +1,21 @@
 from flask import Flask, request, jsonify
 from Infraestructure.APIManager import APIManager
 from Infraestructure.APIValidator import APIValidator
-import binascii
+from flask_swagger_ui import get_swaggerui_blueprint
 
 app = Flask(__name__)
 
+swagger_url = '/api/docs'
+api_url = '/static/swagger.json'
+
+swagger_ui = get_swaggerui_blueprint(
+    swagger_url,
+    api_url,
+    config={
+        'app_name': "Projeto-Fuzzy"
+    }
+)
+app.register_blueprint(swagger_ui)
 
 @app.route('/ProcessaCalagem', methods=['POST'])
 def processa_calagem():
