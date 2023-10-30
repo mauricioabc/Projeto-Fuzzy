@@ -1,272 +1,174 @@
 from Infraestructure.CalcCalculator import CalcCalculator
+from Entities.InformationDicts import InformationDicts
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
+
 class APIManager:
+    def __init__(self):
+        self.entrada = None
+        self.InformationDicts = None
 
-    def define_funcao_pertinencia(self, entrada, nivel_n, nivel_k, nivel_p, eficiencia_inoculacao, quantidade_nitrogenio, quantidade_fosforo, quantidade_potassio, teor_materia_organica=None):
-        if entrada.Cultura == 'Alfafa':
-            # Cria os conjuntos de pertinência para o Fósforo
-            nivel_p['muito_baixo'] = fuzz.trimf(nivel_p.universe, [170, 170, 195])
-            nivel_p['baixo'] = fuzz.trimf(nivel_p.universe, [135, 150, 150])
-            nivel_p['medio'] = fuzz.trimf(nivel_p.universe, [120, 120, 125])
-            nivel_p['alto'] = fuzz.trimf(nivel_p.universe, [85, 120, 120])
+    def processa_nitrogenio(self):
+        # Crie os objetos 'teor_materia_organica' e 'quantidade_nitrogenio' como variáveis Antecedent e Consequente
+        teor_materia_organica = ctrl.Antecedent(np.arange(self.InformationDicts.NitrogenioDict['muito_baixo']['faixa'][0], self.InformationDicts.NitrogenioDict['muito_alto']['faixa'][1], 0.1), 'Teor de Matéria Orgânica no Solo')
+        quantidade_nitrogenio = ctrl.Consequent(np.arange(self.InformationDicts.NitrogenioDict['muito_alto']['kg_n_ha'][0], self.InformationDicts.NitrogenioDict['muito_baixo']['kg_n_ha'][1], 1), 'Quantidade de Nitrogênio')
 
-            # Cria os conjuntos de pertinência para a Quantidade de Fósforo
-            quantidade_fosforo['muito_baixo'] = fuzz.trimf(quantidade_fosforo.universe, [0, 0, 20])
-            quantidade_fosforo['baixo'] = fuzz.trimf(quantidade_fosforo.universe, [10, 20, 30])
-            quantidade_fosforo['medio'] = fuzz.trimf(quantidade_fosforo.universe, [25, 35, 45])
-            quantidade_fosforo['alto'] = fuzz.trimf(quantidade_fosforo.universe, [40, 50, 60])
+        # Crie os conjuntos de pertinência para o Teor de Matéria Orgânica no Solo
+        teor_materia_organica['muito_baixo'] = fuzz.trimf(teor_materia_organica.universe,[0,self.InformationDicts.NitrogenioDict['muito_baixo']['faixa'][0], self.InformationDicts.NitrogenioDict['muito_baixo']['faixa'][1]])
+        teor_materia_organica['baixo'] = fuzz.trimf(teor_materia_organica.universe, [self.InformationDicts.NitrogenioDict['baixo']['faixa'][0], int(np.mean([self.InformationDicts.NitrogenioDict['baixo']['faixa'][0], self.InformationDicts.NitrogenioDict['baixo']['faixa'][1]])),self.InformationDicts.NitrogenioDict['baixo']['faixa'][1]])
+        teor_materia_organica['medio'] = fuzz.trimf(teor_materia_organica.universe, [self.InformationDicts.NitrogenioDict['medio']['faixa'][0], int(np.mean([self.InformationDicts.NitrogenioDict['medio']['faixa'][0], self.InformationDicts.NitrogenioDict['medio']['faixa'][1]])),self.InformationDicts.NitrogenioDict['medio']['faixa'][1]])
+        teor_materia_organica['alto'] = fuzz.trimf(teor_materia_organica.universe, [self.InformationDicts.NitrogenioDict['alto']['faixa'][0], int(np.mean([self.InformationDicts.NitrogenioDict['alto']['faixa'][0], self.InformationDicts.NitrogenioDict['alto']['faixa'][1]])),self.InformationDicts.NitrogenioDict['alto']['faixa'][1]])
+        teor_materia_organica['muito_alto'] = fuzz.smf(teor_materia_organica.universe, self.InformationDicts.NitrogenioDict['muito_alto']['faixa'][0], self.InformationDicts.NitrogenioDict['muito_alto']['faixa'][1])
 
-            # Cria os conjuntos de pertinência para a Quantidade de Potássio
-            quantidade_potassio['muito_baixo'] = fuzz.trimf(quantidade_potassio.universe, [0, 0, 50])
-            quantidade_potassio['baixo'] = fuzz.trimf(quantidade_potassio.universe, [0, 50, 100])
-            quantidade_potassio['medio'] = fuzz.trimf(quantidade_potassio.universe, [50, 100, 100])
-            quantidade_potassio['alto'] = fuzz.trimf(quantidade_potassio.universe, [50, 100, 100])
+        # Crie os conjuntos de pertinência para a Quantidade de Nitrogênio
+        quantidade_nitrogenio['muito_baixo'] = fuzz.trimf(quantidade_nitrogenio.universe, [self.InformationDicts.NitrogenioDict['muito_baixo']['kg_n_ha'][0], int(np.mean([self.InformationDicts.NitrogenioDict['muito_baixo']['kg_n_ha'][0], self.InformationDicts.NitrogenioDict['muito_baixo']['kg_n_ha'][1]])),self.InformationDicts.NitrogenioDict['muito_baixo']['kg_n_ha'][1]])
+        quantidade_nitrogenio['baixo'] = fuzz.trimf(quantidade_nitrogenio.universe, [self.InformationDicts.NitrogenioDict['baixo']['kg_n_ha'][0], int(np.mean([self.InformationDicts.NitrogenioDict['baixo']['kg_n_ha'][0], self.InformationDicts.NitrogenioDict['baixo']['kg_n_ha'][1]])),self.InformationDicts.NitrogenioDict['baixo']['kg_n_ha'][1]])
+        quantidade_nitrogenio['medio'] = fuzz.trimf(quantidade_nitrogenio.universe, [self.InformationDicts.NitrogenioDict['medio']['kg_n_ha'][0], int(np.mean([self.InformationDicts.NitrogenioDict['medio']['kg_n_ha'][0], self.InformationDicts.NitrogenioDict['medio']['kg_n_ha'][1]])),self.InformationDicts.NitrogenioDict['medio']['kg_n_ha'][1]])
+        quantidade_nitrogenio['alto'] = fuzz.trimf(quantidade_nitrogenio.universe, [self.InformationDicts.NitrogenioDict['alto']['kg_n_ha'][0], int(np.mean([self.InformationDicts.NitrogenioDict['alto']['kg_n_ha'][0], self.InformationDicts.NitrogenioDict['alto']['kg_n_ha'][1]])),self.InformationDicts.NitrogenioDict['alto']['kg_n_ha'][1]])
+        quantidade_nitrogenio['muito_alto'] = fuzz.trimf(quantidade_nitrogenio.universe, [self.InformationDicts.NitrogenioDict['muito_alto']['kg_n_ha'][0], int(np.mean([self.InformationDicts.NitrogenioDict['muito_alto']['kg_n_ha'][0], self.InformationDicts.NitrogenioDict['muito_alto']['kg_n_ha'][1]])),self.InformationDicts.NitrogenioDict['muito_alto']['kg_n_ha'][1]])
 
-            # Cria os conjuntos de pertinência para o Nível de Potássio (K)
-            nivel_k['muito_baixo'] = fuzz.trimf(nivel_k.universe, [0, 0, 50])
-            nivel_k['baixo'] = fuzz.trimf(nivel_k.universe, [0, 50, 100])
-            nivel_k['medio'] = fuzz.trimf(nivel_k.universe, [50, 100, 150])
-            nivel_k['alto'] = fuzz.trimf(nivel_k.universe, [100, 150, 200])
+        # Crie regras Fuzzy para o Nitrogênio
+        regra1_nitrogenio = ctrl.Rule(teor_materia_organica['muito_baixo'], quantidade_nitrogenio['muito_baixo'])
+        regra2_nitrogenio = ctrl.Rule(teor_materia_organica['baixo'], quantidade_nitrogenio['baixo'])
+        regra3_nitrogenio = ctrl.Rule(teor_materia_organica['medio'], quantidade_nitrogenio['medio'])
+        regra4_nitrogenio = ctrl.Rule(teor_materia_organica['alto'], quantidade_nitrogenio['alto'])
+        regra5_nitrogenio = ctrl.Rule(teor_materia_organica['muito_alto'], quantidade_nitrogenio['muito_alto'])
 
-        elif entrada.Cultura == 'Espécies perenes':
-            # Defina as funções de pertinência para as variáveis de entrada (níveis de fósforo, potássio e eficiência de inoculação)
-            nivel_p['muito_baixo'] = fuzz.smf(nivel_p.universe, 215,225)
-            nivel_p['baixo'] = fuzz.trapmf(nivel_p.universe, [155, 180, 195, 219])
-            nivel_p['medio'] = fuzz.trapmf(nivel_p.universe, [145, 150, 155, 159])
-            nivel_p['alto'] = fuzz.trapmf(nivel_p.universe, [110, 120, 130, 149])
-            nivel_p['muito_alto'] = fuzz.zmf(nivel_p.universe,105, 110)
+        # Executa Cálculo
+        sistema_controle_nitrogenio = ctrl.ControlSystem([regra1_nitrogenio, regra2_nitrogenio, regra3_nitrogenio, regra4_nitrogenio, regra5_nitrogenio])
+        sistema_nitrogenio = ctrl.ControlSystemSimulation(sistema_controle_nitrogenio)
+        sistema_nitrogenio.input['Teor de Matéria Orgânica no Solo'] = float(self.entrada.MateriaOrganica)
+        sistema_nitrogenio.compute()
+        return round(float(sistema_nitrogenio.output['Quantidade de Nitrogênio']), 2)
 
-            nivel_k['muito_baixo'] = fuzz.smf(nivel_p.universe, 295,300)
-            nivel_k['baixo'] = fuzz.trapmf(nivel_p.universe, [255, 265, 280, 299])
-            nivel_k['medio'] = fuzz.trapmf(nivel_p.universe, [245, 250, 254, 259])
-            nivel_k['alto'] = fuzz.trapmf(nivel_p.universe, [220, 230, 240, 249])
-            nivel_k['muito_alto'] = fuzz.zmf(nivel_p.universe, 215, 220)
+    def processa_fosforo(self):
+        # Crie os objetos 'teor_fosforo' e 'quantidade_fosforo' como variáveis Antecedent e Consequente
+        teor_fosforo = ctrl.Antecedent(np.arange(self.InformationDicts.FosforoDict['muito_baixo']['faixa'][0], self.InformationDicts.FosforoDict['muito_alto']['faixa'][1], 0.1), 'Teor de Fosfóro')
+        quantidade_fosforo = ctrl.Consequent(np.arange(self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][1], 1), 'Quantidade de Fosfóro')
 
-            eficiencia_inoculacao['ineficiente'] = fuzz.trimf(eficiencia_inoculacao.universe, [0, 0, 50])
-            eficiencia_inoculacao['eficiente'] = fuzz.trimf(eficiencia_inoculacao.universe, [40, 70, 100])
+        # Crie os conjuntos de pertinência para o Teor de Fosfóro no Solo
+        teor_fosforo['muito_baixo'] = fuzz.trimf(teor_fosforo.universe,[0,self.InformationDicts.FosforoDict['muito_baixo']['faixa'][0], self.InformationDicts.FosforoDict['muito_baixo']['faixa'][1]])
+        teor_fosforo['baixo'] = fuzz.trimf(teor_fosforo.universe, [self.InformationDicts.FosforoDict['baixo']['faixa'][0], int(np.mean([self.InformationDicts.FosforoDict['baixo']['faixa'][0], self.InformationDicts.FosforoDict['baixo']['faixa'][1]])),self.InformationDicts.FosforoDict['baixo']['faixa'][1]])
+        teor_fosforo['medio'] = fuzz.trimf(teor_fosforo.universe, [self.InformationDicts.FosforoDict['medio']['faixa'][0], int(np.mean([self.InformationDicts.FosforoDict['medio']['faixa'][0], self.InformationDicts.FosforoDict['medio']['faixa'][1]])),self.InformationDicts.FosforoDict['medio']['faixa'][1]])
+        teor_fosforo['alto'] = fuzz.trimf(teor_fosforo.universe, [self.InformationDicts.FosforoDict['alto']['faixa'][0], int(np.mean([self.InformationDicts.FosforoDict['alto']['faixa'][0], self.InformationDicts.FosforoDict['alto']['faixa'][1]])),self.InformationDicts.FosforoDict['alto']['faixa'][1]])
+        teor_fosforo['muito_alto'] = fuzz.smf(teor_fosforo.universe, self.InformationDicts.FosforoDict['muito_alto']['faixa'][0], self.InformationDicts.FosforoDict['muito_alto']['faixa'][1])
 
-            # Defina as funções de pertinência para as variáveis de saída (quantidade de NPK e quantidade de nitrogênio)
-            quantidade_nitrogenio['nitrogenio'] = fuzz.trimf(quantidade_nitrogenio.universe, [0, 0, 80])
-            
-        elif entrada.Cultura == 'Gramíneas':
-            if entrada.Estacao == 'Fria':
-                # Crie os conjuntos de pertinência para o Teor de Matéria Orgânica no Solo
-                teor_materia_organica['muito_baixo'] = fuzz.trimf(teor_materia_organica.universe, [0, 0, 1.6])
-                teor_materia_organica['baixo'] = fuzz.trimf(teor_materia_organica.universe, [1.6, 2.5, 3.5])
-                teor_materia_organica['medio'] = fuzz.trimf(teor_materia_organica.universe, [2.6, 3.5, 4.5])
-                teor_materia_organica['alto'] = fuzz.trimf(teor_materia_organica.universe, [3.6, 4.5, 100])
+        # Crie os conjuntos de pertinência para a Quantidade de Fosfóro
+        quantidade_fosforo['muito_baixo'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][0], self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['muito_baixo']['kg_p_ha'][1]])
+        quantidade_fosforo['baixo'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['baixo']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['baixo']['kg_p_ha'][0], self.InformationDicts.FosforoDict['baixo']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['baixo']['kg_p_ha'][1]])
+        quantidade_fosforo['medio'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['medio']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['medio']['kg_p_ha'][0], self.InformationDicts.FosforoDict['medio']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['medio']['kg_p_ha'][1]])
+        quantidade_fosforo['alto'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['alto']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['alto']['kg_p_ha'][0], self.InformationDicts.FosforoDict['alto']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['alto']['kg_p_ha'][1]])
+        quantidade_fosforo['muito_alto'] = fuzz.trimf(quantidade_fosforo.universe, [self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][0], int(np.mean([self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][1]])),self.InformationDicts.FosforoDict['muito_alto']['kg_p_ha'][1]])
 
-                # Crie os conjuntos de pertinência para a Quantidade de Nitrogênio
-                quantidade_nitrogenio['muito_baixo'] = fuzz.trimf(quantidade_nitrogenio.universe, [80, 80, 100])
-                quantidade_nitrogenio['baixo'] = fuzz.trimf(quantidade_nitrogenio.universe, [100, 120, 140])
-                quantidade_nitrogenio['medio'] = fuzz.trimf(quantidade_nitrogenio.universe, [120, 140, 160])
-                quantidade_nitrogenio['alto'] = fuzz.trimf(quantidade_nitrogenio.universe, [140, 160, 180])
+        # Crie regras Fuzzy para o Fosfóro
+        regra1_fosforo = ctrl.Rule(teor_fosforo['muito_baixo'], quantidade_fosforo['muito_baixo'])
+        regra2_fosforo = ctrl.Rule(teor_fosforo['baixo'], quantidade_fosforo['baixo'])
+        regra3_fosforo = ctrl.Rule(teor_fosforo['medio'], quantidade_fosforo['medio'])
+        regra4_fosforo = ctrl.Rule(teor_fosforo['alto'], quantidade_fosforo['alto'])
+        regra5_fosforo = ctrl.Rule(teor_fosforo['muito_alto'], quantidade_fosforo['muito_alto'])
 
-                # Crie os conjuntos de pertinência para o Nível de Fósforo
-                nivel_p['muito_baixo'] = fuzz.trimf(nivel_p.universe, [110, 110, 170])
-                nivel_p['baixo'] = fuzz.trimf(nivel_p.universe, [90, 110, 110])
-                nivel_p['medio'] = fuzz.trimf(nivel_p.universe, [60, 100, 100])
-                nivel_p['alto'] = fuzz.trimf(nivel_p.universe, [60, 60, 100])
+        # Executa Cálculo
+        sistema_controle_fosforo = ctrl.ControlSystem([regra1_fosforo, regra2_fosforo, regra3_fosforo, regra4_fosforo, regra5_fosforo])
+        sistema_fosforo = ctrl.ControlSystemSimulation(sistema_controle_fosforo)
+        sistema_fosforo.input['Teor de Fosfóro'] = float(self.entrada.p)
+        sistema_fosforo.compute()
+        return round(float(sistema_fosforo.output['Quantidade de Fosfóro']), 2)
 
-                # Crie os conjuntos de pertinência para a Quantidade de Fósforo
-                quantidade_fosforo['muito_baixo'] = fuzz.trimf(quantidade_fosforo.universe, [0, 0, 50])
-                quantidade_fosforo['baixo'] = fuzz.trimf(quantidade_fosforo.universe, [0, 50, 100])
-                quantidade_fosforo['medio'] = fuzz.trimf(quantidade_fosforo.universe, [50, 100, 100])
-                quantidade_fosforo['alto'] = fuzz.trimf(quantidade_fosforo.universe, [50, 100, 100])
+    def processa_potassio(self):
+        # Crie os objetos 'teor_potassio' e 'quantidade_potassio' como variáveis Antecedent e Consequente
+        teor_potassio = ctrl.Antecedent(np.arange(self.InformationDicts.PotassioDict['muito_baixo']['faixa'][0], self.InformationDicts.PotassioDict['muito_alto']['faixa'][1], 0.1), 'Teor de Potássio')
+        quantidade_potassio = ctrl.Consequent(np.arange(self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][1], 1), 'Quantidade de Potássio')
 
-                # Crie os conjuntos de pertinência para o Nível de Potássio
-                nivel_k['muito_baixo'] = fuzz.trimf(nivel_k.universe, [100, 140, 180])
-                nivel_k['baixo'] = fuzz.trimf(nivel_k.universe, [80, 100, 120])
-                nivel_k['medio'] = fuzz.trimf(nivel_k.universe, [60, 90, 120])
-                nivel_k['alto'] = fuzz.trimf(nivel_k.universe, [60, 60, 60])
+        # Crie os conjuntos de pertinência para o Teor de Potássio no Solo
+        teor_potassio['muito_baixo'] = fuzz.trimf(teor_potassio.universe,[0,self.InformationDicts.PotassioDict['muito_baixo']['faixa'][0], self.InformationDicts.PotassioDict['muito_baixo']['faixa'][1]])
+        teor_potassio['baixo'] = fuzz.trimf(teor_potassio.universe, [self.InformationDicts.PotassioDict['baixo']['faixa'][0], int(np.mean([self.InformationDicts.PotassioDict['baixo']['faixa'][0], self.InformationDicts.PotassioDict['baixo']['faixa'][1]])),self.InformationDicts.PotassioDict['baixo']['faixa'][1]])
+        teor_potassio['medio'] = fuzz.trimf(teor_potassio.universe, [self.InformationDicts.PotassioDict['medio']['faixa'][0], int(np.mean([self.InformationDicts.PotassioDict['medio']['faixa'][0], self.InformationDicts.PotassioDict['medio']['faixa'][1]])),self.InformationDicts.PotassioDict['medio']['faixa'][1]])
+        teor_potassio['alto'] = fuzz.trimf(teor_potassio.universe, [self.InformationDicts.PotassioDict['alto']['faixa'][0], int(np.mean([self.InformationDicts.PotassioDict['alto']['faixa'][0], self.InformationDicts.PotassioDict['alto']['faixa'][1]])),self.InformationDicts.PotassioDict['alto']['faixa'][1]])
+        teor_potassio['muito_alto'] = fuzz.smf(teor_potassio.universe, self.InformationDicts.PotassioDict['muito_alto']['faixa'][0], self.InformationDicts.PotassioDict['muito_alto']['faixa'][1])
 
-                # Crie os conjuntos de pertinência para a Quantidade de Potássio
-                quantidade_potassio['muito_baixo'] = fuzz.trimf(quantidade_potassio.universe, [0, 0, 50])
-                quantidade_potassio['baixo'] = fuzz.trimf(quantidade_potassio.universe, [0, 50, 100])
-                quantidade_potassio['medio'] = fuzz.trimf(quantidade_potassio.universe, [50, 100, 100])
-                quantidade_potassio['alto'] = fuzz.trimf(quantidade_potassio.universe, [50, 100, 100])
+        # Crie os conjuntos de pertinência para a Quantidade de Potássio
+        quantidade_potassio['muito_baixo'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][0], self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['muito_baixo']['kg_p_ha'][1]])
+        quantidade_potassio['baixo'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['baixo']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['baixo']['kg_p_ha'][0], self.InformationDicts.PotassioDict['baixo']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['baixo']['kg_p_ha'][1]])
+        quantidade_potassio['medio'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['medio']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['medio']['kg_p_ha'][0], self.InformationDicts.PotassioDict['medio']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['medio']['kg_p_ha'][1]])
+        quantidade_potassio['alto'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['alto']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['alto']['kg_p_ha'][0], self.InformationDicts.PotassioDict['alto']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['alto']['kg_p_ha'][1]])
+        quantidade_potassio['muito_alto'] = fuzz.trimf(quantidade_potassio.universe, [self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][0], int(np.mean([self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][0], self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][1]])),self.InformationDicts.PotassioDict['muito_alto']['kg_p_ha'][1]])
 
-        elif entrada.Cultura == 'Leguminosas':
-            # Defina as funções de pertinência para as variáveis de entrada (níveis de fósforo, potássio e eficiência de inoculação)
-            nivel_p['muito_baixo'] = fuzz.smf(nivel_p.universe, 165,170)
-            nivel_p['baixo'] = fuzz.trapmf(nivel_p.universe, [105, 135, 155, 169])
-            nivel_p['medio'] = fuzz.trapmf(nivel_p.universe, [95, 104, 106, 109])
-            nivel_p['alto'] = fuzz.trapmf(nivel_p.universe, [55, 68, 78, 99])
-            nivel_p['muito_alto'] = fuzz.zmf(nivel_p.universe,40, 60)
+        # Crie regras Fuzzy para o Potássio
+        regra1_potassio = ctrl.Rule(teor_potassio['muito_baixo'], quantidade_potassio['muito_baixo'])
+        regra2_potassio = ctrl.Rule(teor_potassio['baixo'], quantidade_potassio['baixo'])
+        regra3_potassio = ctrl.Rule(teor_potassio['medio'], quantidade_potassio['medio'])
+        regra4_potassio = ctrl.Rule(teor_potassio['alto'], quantidade_potassio['alto'])
+        regra5_potassio = ctrl.Rule(teor_potassio['muito_alto'], quantidade_potassio['muito_alto'])
 
-            nivel_k['muito_baixo'] = fuzz.smf(nivel_p.universe, 135,145)
-            nivel_k['baixo'] = fuzz.trapmf(nivel_p.universe, [95, 120, 130, 139])
-            nivel_k['medio'] = fuzz.trapmf(nivel_p.universe, [85, 90, 94, 99])
-            nivel_k['alto'] = fuzz.trapmf(nivel_p.universe, [55, 65, 75, 89])
-            nivel_k['muito_alto'] = fuzz.zmf(nivel_p.universe, 40, 60)
-
-            eficiencia_inoculacao['ineficiente'] = fuzz.trimf(eficiencia_inoculacao.universe, [0, 0, 50])
-            eficiencia_inoculacao['eficiente'] = fuzz.trimf(eficiencia_inoculacao.universe, [40, 70, 100])
-
-            # Defina as funções de pertinência para as variáveis de saída (quantidade de NPK e quantidade de nitrogênio)
-            quantidade_nitrogenio['nitrogenio'] = fuzz.trimf(quantidade_nitrogenio.universe, [0, 0, 80])
-
-        elif entrada.Cultura == 'Consórcios':    
-            # Defina as funções de pertinência para as variáveis de entrada (níveis de fósforo, potássio e eficiência de inoculação)
-            nivel_p['muito_baixo'] = fuzz.smf(nivel_p.universe, 190,195)
-            nivel_p['baixo'] = fuzz.trapmf(nivel_p.universe, [125, 150, 160, 179])
-            nivel_p['medio'] = fuzz.trapmf(nivel_p.universe, [115, 122, 125, 129])
-            nivel_p['alto'] = fuzz.trapmf(nivel_p.universe, [75, 95, 115, 119])
-            nivel_p['muito_alto'] = fuzz.zmf(nivel_p.universe,75, 80)
-
-            nivel_k['muito_baixo'] = fuzz.smf(nivel_p.universe, 175,185)
-            nivel_k['baixo'] = fuzz.trapmf(nivel_p.universe, [135, 145, 155, 179])
-            nivel_k['medio'] = fuzz.trapmf(nivel_p.universe, [125, 132, 135, 139])
-            nivel_k['alto'] = fuzz.trapmf(nivel_p.universe, [95, 115, 120, 129])
-            nivel_k['muito_alto'] = fuzz.zmf(nivel_p.universe, 80, 100)
-
-            eficiencia_inoculacao['ineficiente'] = fuzz.trimf(eficiencia_inoculacao.universe, [0, 0, 50])
-            eficiencia_inoculacao['eficiente'] = fuzz.trimf(eficiencia_inoculacao.universe, [40, 70, 100])
-
-            # Defina as funções de pertinência para as variáveis de saída (quantidade de NPK e quantidade de nitrogênio)
-            quantidade_nitrogenio['nitrogenio'] = fuzz.trimf(quantidade_nitrogenio.universe, [0, 0, 80])
-        
-        elif entrada.Cultura == 'Campo natural':
-            # Defina as funções de pertinência para as variáveis de entrada (níveis de fósforo, potássio e eficiência de inoculação)
-            nivel_p['muito_baixo'] = fuzz.smf(nivel_p.universe, 95,105)
-            nivel_p['baixo'] = fuzz.trapmf(nivel_p.universe, [70, 80, 90, 99])
-            nivel_p['medio'] = fuzz.trapmf(nivel_p.universe, [65, 69, 72, 74])
-            nivel_p['alto'] = fuzz.trapmf(nivel_p.universe, [45, 55, 65, 69])
-            nivel_p['muito_alto'] = fuzz.zmf(nivel_p.universe,40, 50)
-
-            nivel_k['muito_baixo'] = fuzz.smf(nivel_p.universe, 95,105)
-            nivel_k['baixo'] = fuzz.trapmf(nivel_p.universe, [70, 80, 90, 99])
-            nivel_k['medio'] = fuzz.trapmf(nivel_p.universe, [65, 69, 72, 74])
-            nivel_k['alto'] = fuzz.trapmf(nivel_p.universe, [45, 55, 65, 69])
-            nivel_k['muito_alto'] = fuzz.zmf(nivel_p.universe,40, 50)
-
-            eficiencia_inoculacao['ineficiente'] = fuzz.trimf(eficiencia_inoculacao.universe, [0, 0, 50])
-            eficiencia_inoculacao['eficiente'] = fuzz.trimf(eficiencia_inoculacao.universe, [40, 70, 100])
-
-            # Defina as funções de pertinência para as variáveis de saída (quantidade de NPK e quantidade de nitrogênio)
-            quantidade_nitrogenio['nitrogenio'] = fuzz.trimf(quantidade_nitrogenio.universe, [0, 0, 80])
-            
-
-
+        # Executa Cálculo
+        sistema_controle_potassio = ctrl.ControlSystem([regra1_potassio, regra2_potassio, regra3_potassio, regra4_potassio, regra5_potassio])
+        sistema_potassio = ctrl.ControlSystemSimulation(sistema_controle_potassio)
+        sistema_potassio.input['Teor de Potássio'] = float(self.entrada.CTC)
+        sistema_potassio.compute()
+        return round(float(sistema_potassio.output['Quantidade de Potássio']), 2)
 
     def processa_adubacao(self, entrada):
+        # Cria dados que serão utilizados nos cálculos e retornos
+        self.entrada = entrada
+        self.InformationDicts = InformationDicts(entrada)
         mensagem_N = ""
         mensagem_P = ""
         mensagem_K = ""
 
         # Processa Alfafa
         if entrada.Cultura == 'Alfafa':
-            # Processa o N
             if entrada.Inoculacao == 'true':
                 mensagem_N = 'A adubação nitrogenada não é necessária.'
             else :
                 mensagem_N = 'Aplicar de 20 a 40 kg de N/ha após cada corte, dependendo do desenvolvimento da cultura.'
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
-            # Cria as variáveis de entrada (níveis de fósforo, potássio, nitrogênio e eficiência de inoculação)
-            nivel_p = ctrl.Antecedent(np.arange(0, 200, 1), 'Nível de Fósforo (P)')
-            nivel_k = ctrl.Antecedent(np.arange(0, 200, 1), 'Nível de Potássio (K)')
-            nivel_n = ctrl.Antecedent(np.arange(0, 200, 1), 'Nível de Nitrogênio (N)')
-            eficiencia_inoculacao = ctrl.Antecedent(np.arange(0, 101, 1), 'Eficiência de Inoculação')
-            quantidade_nitrogenio = ctrl.Consequent(np.arange(0, 80, 1), 'Quantidade de Nitrogênio')
-            quantidade_fosforo = ctrl.Consequent(np.arange(0, 80, 1), 'Quantidade de Fósforo')
-            quantidade_potassio = ctrl.Consequent(np.arange(0, 80, 1), 'Quantidade de Potássio')
-
-            # Define as funções de pertinência para as variáveis de entrada e saída
-            self.define_funcao_pertinencia(entrada, nivel_n, nivel_k, nivel_p, eficiencia_inoculacao,
-                                           quantidade_nitrogenio, quantidade_fosforo, quantidade_potassio)
-
-            # Cria regras Fuzzy para o Fósforo
-            regra1_fosforo = ctrl.Rule(nivel_p['muito_baixo'], quantidade_fosforo['muito_baixo'])
-            regra2_fosforo = ctrl.Rule(nivel_p['baixo'], quantidade_fosforo['baixo'])
-            regra3_fosforo = ctrl.Rule(nivel_p['medio'], quantidade_fosforo['medio'])
-            regra4_fosforo = ctrl.Rule(nivel_p['alto'], quantidade_fosforo['alto'])
-
-            sistema_controle = ctrl.ControlSystem([regra1_fosforo, regra2_fosforo, regra3_fosforo, regra4_fosforo])
-            sistema = ctrl.ControlSystemSimulation(sistema_controle)
-            sistema.input['Nível de Fósforo (P)'] = int(entrada.p)
-            sistema.compute()
-            mensagem_P = f"É preciso aplicar {round(float(sistema.output['Quantidade de Fósforo']), 2)}kg/ha."
-            print("Quantidade de Fósforo:", sistema.output['Quantidade de Fósforo'])
-
-            # Cria regras Fuzzy para o Potássio
-            regra1_potassio = ctrl.Rule(nivel_k['muito_baixo'], quantidade_potassio['muito_baixo'])
-            regra2_potassio = ctrl.Rule(nivel_k['baixo'], quantidade_potassio['baixo'])
-            regra3_potassio = ctrl.Rule(nivel_k['medio'], quantidade_potassio['medio'])
-            regra4_potassio = ctrl.Rule(nivel_k['alto'], quantidade_potassio['alto'])
-
-            sistema_controle = ctrl.ControlSystem([regra1_potassio, regra2_potassio, regra3_potassio, regra4_potassio])
-            sistema = ctrl.ControlSystemSimulation(sistema_controle)
-            sistema.input['Nível de Potássio (K)'] = int(entrada.k)
-            sistema.compute()
-            mensagem_K = f"É preciso aplicar {round(float(sistema.output['Quantidade de Potássio']), 2)}kg/ha."
-            print("Quantidade de Potássio:", sistema.output['Quantidade de Potássio'])
-
+        # Processa Gramíneas
         if entrada.Cultura == 'Gramíneas':
-            if entrada.Estacao == 'Fria':
-                teor_materia_organica = ctrl.Antecedent(np.arange(0, 5.1, 0.1), 'Teor de Matéria Orgânica no Solo')
-                quantidade_nitrogenio = ctrl.Consequent(np.arange(80, 181, 1), 'Quantidade de Nitrogênio')
-                nivel_p = ctrl.Antecedent(np.arange(0, 200, 1), 'Nível de Fósforo (P)')
-                quantidade_fosforo = ctrl.Consequent(np.arange(0, 101, 1), 'Quantidade de Fósforo')
-                nivel_k = ctrl.Antecedent(np.arange(0, 200, 1), 'Nível de Potássio (K)')
-                quantidade_potassio = ctrl.Consequent(np.arange(0, 101, 1), 'Quantidade de Potássio')
-                # Define as funções de pertinência para as variáveis de entrada e saída
-                self.define_funcao_pertinencia(entrada=entrada, nivel_n=nivel_k, nivel_p=nivel_p, nivel_k=nivel_k,
-                                               eficiencia_inoculacao=0,
-                                               quantidade_nitrogenio=quantidade_nitrogenio,
-                                               quantidade_fosforo=quantidade_fosforo,
-                                               quantidade_potassio=quantidade_potassio,
-                                               teor_materia_organica=teor_materia_organica)
+            mensagem_N = f"É preciso aplicar {self.processa_nitrogenio()}kg/ha."
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
-                # Crie regras Fuzzy para o Nitrogênio
-                regra1_nitrogenio = ctrl.Rule(teor_materia_organica['muito_baixo'],quantidade_nitrogenio['muito_baixo'])
-                regra2_nitrogenio = ctrl.Rule(teor_materia_organica['baixo'], quantidade_nitrogenio['baixo'])
-                regra3_nitrogenio = ctrl.Rule(teor_materia_organica['medio'], quantidade_nitrogenio['medio'])
-                regra4_nitrogenio = ctrl.Rule(teor_materia_organica['alto'], quantidade_nitrogenio['alto'])
+        # Processa Leguminosas
+        if entrada.Cultura == 'Leguminosas':
+            if entrada.Inoculacao == 'true':
+                mensagem_N = 'A adubação nitrogenada não é necessária.'
+            else :
+                mensagem_N = 'Aplicar nitrogênio na dose de 20 kg de N/ha, após cada duas utilizações da pastagem.'
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
-                # Crie o sistema de controle fuzzy
-                sistema_controle_nitrogenio = ctrl.ControlSystem([regra1_nitrogenio, regra2_nitrogenio, regra3_nitrogenio, regra4_nitrogenio])
-                sistema_nitrogenio = ctrl.ControlSystemSimulation(sistema_controle_nitrogenio)
-                sistema_nitrogenio.input['Teor de Matéria Orgânica no Solo'] = float(entrada.MateriaOrganica)
-                sistema_nitrogenio.compute()
-                mensagem_N = f"É preciso aplicar {round(float(sistema_nitrogenio.output['Quantidade de Nitrogênio']), 2)}kg/ha."
-                print("Quantidade de Nitrogênio:", sistema_nitrogenio.output['Quantidade de Nitrogênio'])
+        # Processa Consórcios
+        if entrada.Cultura == 'Consórcios':
+            if entrada.Inoculacao == 'true':
+                mensagem_N = 'A adubação nitrogenada não é necessária.'
+            else:
+                mensagem_N = 'Aaplicar 20 kg de N/ha por ocasião do perfilhamento da gramínea e 20 kg de N/ha após cada duas utilizações da pastagem'
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
-                # Crie regras Fuzzy para o Fósforo
-                regra1_fosforo = ctrl.Rule(nivel_p['muito_baixo'], quantidade_fosforo['muito_baixo'])
-                regra2_fosforo = ctrl.Rule(nivel_p['baixo'], quantidade_fosforo['baixo'])
-                regra3_fosforo = ctrl.Rule(nivel_p['medio'], quantidade_fosforo['medio'])
-                regra4_fosforo = ctrl.Rule(nivel_p['alto'], quantidade_fosforo['alto'])
+        # Processa Milho e Sorgo
+        if entrada.Cultura == 'Milho':
+            mensagem_N = f"É preciso aplicar {self.processa_nitrogenio()}kg/ha."
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
-                # Crie o sistema de controle fuzzy
-                sistema_controle_fosforo = ctrl.ControlSystem(
-                    [regra1_fosforo, regra2_fosforo, regra3_fosforo, regra4_fosforo])
-                sistema_fosforo = ctrl.ControlSystemSimulation(sistema_controle_fosforo)
-                sistema_fosforo.input['Nível de Fósforo (P)'] = int(entrada.p)
-                sistema_fosforo.compute()
-                mensagem_P = f"É preciso aplicar {round(float(sistema_fosforo.output['Quantidade de Fósforo']), 2)}kg/ha."
-                print(mensagem_P)
+        # Processa Pastagens Naturais
+        if entrada.Cultura == 'Campo natural':
+            mensagem_N = f"É preciso aplicar {self.processa_nitrogenio()}kg/ha."
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
-                # Crie regras Fuzzy para o Potássio
-                regra1_potassio = ctrl.Rule(nivel_k['muito_baixo'], quantidade_potassio['muito_baixo'])
-                regra2_potassio = ctrl.Rule(nivel_k['baixo'], quantidade_potassio['baixo'])
-                regra3_potassio = ctrl.Rule(nivel_k['medio'], quantidade_potassio['medio'])
-                regra4_potassio = ctrl.Rule(nivel_k['alto'], quantidade_potassio['alto'])
-
-                # Crie o sistema de controle fuzzy
-                sistema_controle_potassio = ctrl.ControlSystem(
-                    [regra1_potassio, regra2_potassio, regra3_potassio, regra4_potassio])
-                sistema_potassio = ctrl.ControlSystemSimulation(sistema_controle_potassio)
-                sistema_potassio.input['Nível de Potássio (K)'] = int(entrada.k)
-                sistema_potassio.compute()
-                mensagem_K = f"É preciso aplicar {round(float(sistema_potassio.output['Quantidade de Potássio']), 2)}kg/ha."
-                print(mensagem_K)
+        # Processa Pastagens Misturadas
+        if entrada.Cultura == 'Campo natural misturado':
+            mensagem_N = f"É preciso aplicar {self.processa_nitrogenio()}kg/ha."
+            mensagem_P = f"É preciso aplicar {self.processa_fosforo()}kg/ha."
+            mensagem_K = f"É preciso aplicar {self.processa_potassio()}kg/ha."
 
         return mensagem_N, mensagem_P, mensagem_K
-
-
 
     def processa_calagem(self, entrada):
         phSolo = float(entrada.phSolo)

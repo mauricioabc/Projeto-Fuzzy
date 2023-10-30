@@ -1,11 +1,13 @@
 {
 	"Especie": "Forrageira",
-	"Cultura": "Gramíneas",
-	"Estacao": "Fria",
+	"Cultura": "Campo natural misturado",
+	"Estacao": "Quente",
 	"TipoPlantio": "Convencional",
 	"NivelNitrogenio": "120",
 	"EficienciaInoculacao": "true",
-	"NivelFosforo": "120",
+	"NivelFosforo": "1.20",
 	"NivelPotassio": "120",
-	"MateriaOrganica": "5.1"
+	"MateriaOrganica": "4.1",
+	"TeorArgila": "45",
+	"CTC": "14.51"
 }

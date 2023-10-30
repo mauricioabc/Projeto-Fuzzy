@@ -1,0 +1,201 @@
+{
+   "openapi": "3.0.3",
+   "info": {
+      "title": "Swagger Projeto Fuzzy 1.0.0",
+      "description": "API de recomendação de calagem e adubação.",
+      "version": "1.0.0"
+   },
+   "servers": [
+      {
+         "url": "http://192.168.1.69:5001"
+      },
+      {
+         "url": "http://127.0.0.1:5001"
+      }
+   ],
+   "tags": [
+      {
+         "name": "Calagem",
+         "description": "Recomenda a quantidade de calcário necessária."
+      },
+      {
+         "name": "Adubação",
+         "description": "Recomenda a quantidade de NPK necessária."
+      }
+   ],
+   "paths": {
+      "/ProcessaCalagem": {
+         "post": {
+            "tags": [
+               "Calagem"
+            ],
+            "summary": "Calcula calagem",
+            "description": "Faz a recomendação de calagem com base nas entradas fornecidas.",
+            "operationId": "Calagem",
+            "requestBody": {
+               "description": "Created object",
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "$ref": "#/components/schemas/Calagem"
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "default": {
+                  "description": "successful operation",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/components/schemas/Calagem"
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      },
+      "/ProcessaAdubacao": {
+         "post": {
+            "tags": [
+               "Adubação"
+            ],
+            "summary": "Calcula adubação",
+            "description": "Faz a recomendação de NPK com base nas entradas fornecidas.",
+            "operationId": "Adubação",
+            "requestBody": {
+               "description": "Created object",
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "$ref": "#/components/schemas/Adubacao"
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "default": {
+                  "description": "successful operation",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/components/schemas/Adubacao"
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   },
+   "components": {
+      "schemas": {
+         "Adubacao": {
+            "type": "object",
+            "properties": {
+               "Especie": {
+                  "type": "string",
+                  "example": "Forrageira"
+               },
+               "Cultura": {
+                  "type": "string",
+                  "example": "Alfafa"
+               },
+               "Estacao": {
+                  "type": "string",
+                  "example": "Fria"
+               },
+               "TipoPlantio": {
+                  "type": "string",
+                  "example": "Convencional"
+               },
+               "NivelNitrogenio": {
+                  "type": "string",
+                  "example": "1.20"
+               },
+               "EficienciaInoculacao": {
+                  "type": "string",
+                  "example": "true"
+               },
+               "NivelFosforo": {
+                  "type": "string",
+                  "example": "1.20"
+               },
+               "NivelPotassio": {
+                  "type": "string",
+                  "example": "1.20"
+               },
+               "MateriaOrganica": {
+                  "type": "string",
+                  "example": "5.1"
+               },
+               "TeorArgila": {
+                  "type": "string",
+                  "example": "45"
+               },
+               "CTC": {
+                  "type": "string",
+                  "example": "14.51"
+               }
+            }
+         },
+         "Calagem": {
+            "type": "object",
+            "properties": {
+               "Especie": {
+                  "type": "string",
+                  "example": "Forrageira"
+               },
+               "Cultura": {
+                  "type": "string",
+                  "example": "Alfafa"
+               },
+               "TipoPlantio": {
+                  "type": "string",
+                  "example": "Convencional"
+               },
+               "phSolo": {
+                  "type": "string",
+                  "example": "7.0"
+               },
+               "IndiceSMP": {
+                  "type": "string",
+                  "example": "5.19"
+               },
+               "Bases": {
+                  "type": "string",
+                  "example": "23.85"
+               },
+               "Ca": {
+                  "type": "string",
+                  "example": "2.07"
+               },
+               "Mg": {
+                  "type": "string",
+                  "example": "1.17"
+               },
+               "AlSat": {
+                  "type": "string",
+                  "example": "38.87"
+               },
+               "CTC": {
+                  "type": "string",
+                  "example": "14.51"
+               }
+            }
+         },
+         "ApiResponse": {
+            "type": "object",
+            "properties": {
+               "message": {
+                  "type": "string"
+               },
+               "status": {
+                  "type": "string"
+               }
+            }
+         }
+      }
+   }
+}
